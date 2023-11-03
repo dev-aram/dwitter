@@ -31,7 +31,7 @@ export async function createTweet(req,res,next){
 export async function updateTweet(req,res,next){
     const id = req.params.id
     const text = req.body.text
-    const tweet =await tweetRepository.update(id,text)
+    const tweet = await tweetRepository.update(id,text)
     if(tweet) {
         res.status(200).json(tweet)
     }else{
