@@ -25,5 +25,6 @@ const router = express.Router();
 
 router.post("/signup",validateJoin, authController.joinUser)
 router.post("/login",authController.login)
+router.get("/me",authController.jwtToken)
 
 export default router;

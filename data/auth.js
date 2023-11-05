@@ -23,7 +23,7 @@ export async function join(id, username, password, name, email) {
     return user;
 }
 
-export async function login(id, password) {
-    const user = users.find((user)=> user.username === id);
+export async function login(username, password) {
+    const user = users.find((user)=> user.username === username);
     return user;
 }
