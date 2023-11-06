@@ -1,12 +1,19 @@
 import express  from "express";
 import * as authController from "../controller/auth.js";
 import { validate } from "../middleware/validator.js";
+import { isAuth } from "../middleware/auth.js";
 import {body, param} from "express-validator";
 
+const vaildateCredential = [
+    body('username').trim().notEmpty().withMessage('username을 입력하세요'),
+    body('password').trim().isLength({min:4}).withMessage('password를 4자 이상 입력하세요'), validate,
+]
+
 const validateJoin = [
-    body('username').trim().isLength({min:5}).withMessage('username을 5글자 이상 입력하세요'), validate,
-    body('password').trim().isLength({min:5}).withMessage('password를 5글자 이상 입력하세요'), validate,
-    body('email').trim().isEmail().withMessage('이메일 형식을 맞춰서 입력해주세요.')
+    ... vaildateCredential,
+    body('name').trim().notEmpty().withMessage('이름을 입력해주세요'),
+    body('email').isEmail().withMessage('이메일 형식에 맞춰서 입력해주세요.'),
+    body('url').isURL().withMessage('URL 형식 확인').optional({nullable: true, checkFalsy:true}), validate
 ]
 
 /*
@@ -23,8 +30,8 @@ const validateJoin = [
 // 회원가입
 const router = express.Router();
 
-router.post("/signup",validateJoin, authController.joinUser)
-router.post("/login",authController.login)
-router.get("/me",authController.jwtToken)
+router.post("/signup",validateJoin, authController.signup)
+router.get("/me",isAuth ,authController.me)
+router.post("/login",vaildateCredential, authController.login)
 
 export default router;
