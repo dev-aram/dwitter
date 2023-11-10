@@ -1,4 +1,5 @@
 import * as tweetRepository from '../data/tweets.js';
+import { getSocketIO } from '../connection/socket.js';
 
 // 데이터를 여기에서 로직처리
 
@@ -27,6 +28,7 @@ export async function createTweet(req,res,next){
     const {text} = req.body
     const tweet = await tweetRepository.create(text, req.userId) // 만들 텍스트와 로그인한 유저(토큰)의 아이디 전달해서 무조건 자신의 게시물을 쓰게끔
     res.status(201).json(tweet)
+    getSocketIO().emit('tweets'. tweet)
 }
 
 //updateTweet
@@ -58,7 +60,7 @@ export async function deleteTweet(req,res,next){
     if(req.userId !== tweet.userId){ //로그인한 유저와 게시글작성자 같은지 확인
         return res.status(404).json({message:`작성자가 아닙니다.`})
     }
-    await tweetRepository.remove(id) // 다 조건에 맞을경우 삭제!
+    const del = await tweetRepository.remove(id) // 다 조건에 맞을경우 삭제!
     return res.sendStatus(204)
 
 }

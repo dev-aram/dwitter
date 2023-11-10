@@ -58,6 +58,6 @@ export async function update(id,text){
     return getById(tweet.id) // 게시물 아이디로 검색한 결과(게시물)리턴
 }
 
-export async function remove(id){
-    return tweets.filter((tweet) => tweet.id !== id)
+export async function remove(id) {
+    tweets = tweets.filter((tweet) => tweet.id !== id);
 }
