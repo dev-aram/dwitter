@@ -7,7 +7,7 @@ import authRouter from "./router/auth.js";
 import { config } from "./config.js"
 // dotenv.config(); config.js로 이동
 import { initSocket } from "./connection/socket.js";
-import { db } from "./db/database.js";
+import { sequelize } from "./db/database.js";
 
 const app = express();
 
@@ -24,6 +24,7 @@ app.use((req, res, next) => {
     res.sendStatus(404);
 });
 
-// db.getConnection().then(connection => console.log(connection)) 연결 확인용
-const server = app.listen(config.host.port);
-initSocket(server);
+sequelize.sync().then((client) => {
+    const server = app.listen(config.host.port);
+    initSocket(server);
+})
