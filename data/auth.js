@@ -1,41 +1,56 @@
-import { db } from '../db/database.js';
-// let users = [
-//     {
-//         id: '1',
-//         username: 'apple',
-//         password: '$2b$10$6NVVL4gEtPh684Ncn2sCRe/LPe0u4kRkhBYSoiLx4bTGW5gwQ58Dy',
-//         name:'김사과',
-//         email:'apple@apple.com',
-//         url : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrYEhHx-OXQF1NqVRXPL8R50ggKje3hQTvIA&usqp=CAU'
-//     },
-//     {
-//         id: '2',
-//         username: 'banana',
-//         password: '$2b$10$6NVVL4gEtPh684Ncn2sCRe/LPe0u4kRkhBYSoiLx4bTGW5gwQ58Dy',
-//         name:'반하나',
-//         email:'banana@banana.com',
-//         url : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrYEhHx-OXQF1NqVRXPL8R50ggKje3hQTvIA&usqp=CAU'
-//     },
-// ]
+// import { db } from '../db/database.js'; mysql
+import Mongoose from 'mongoose';
+import { useVirtualId } from '../db/database.js';
 
+const userShema = new Mongoose.Schema({
+  username: { type: String, required: true },
+  name: { type: String, required: true },
+  email: { type: String, required: true },
+  password: { type: String, required: true },
+  url: String,
+});
+
+useVirtualId(userShema);
+const User = Mongoose.model('User', userShema); // 자동으로 s가 붙음 컬렉션이 만들어진다
 
 // 유저이름 중복검사
 export async function findByUsername(username) {
-    // return users.find((user)=> user.username === username);
-    return db.execute('SELECT * FROM users WHERE username = ?',[username]).then(result => {return result[0][0]})
+  return User.findOne({ username });
 }
 
-// id 중복검사
 export async function findById(id) {
-    // return users.find((user)=> user.id === id);
-    return db.execute('SELECT * FROM users WHERE id = ?',[id]).then(result => {return result[0][0]})
+  return User.findById(id);
 }
 
-// 회원가입
 export async function createUser(user) {
-    const {username, password, name, email, url} = user;
-    return db.execute('INSERT INTO users(username, password,  name, email, url) values(?,?,?,?,?)', [username, password, name, email, url]).then((result)=> result[0].insertId)
-    // const created = {id:'10', ...user}
-    // users.push(created);
-    // return created.id;
+  return new User(user).save().then((data) => data.id); // data.id 는 버추얼 아이디
 }
+
+// mysql
+// // 유저이름 중복검사
+// export async function findByUsername(username) {
+//   return db.execute('SELECT * FROM users WHERE username = ?', [username]).then((result) => {
+//     return result[0][0];
+//   });
+// }
+
+// // id 중복검사
+// export async function findById(id) {
+//   return db.execute('SELECT * FROM users WHERE id = ?', [id]).then((result) => {
+//     return result[0][0];
+//   });
+// }
+
+// // 회원가입
+// export async function createUser(user) {
+//   const { username, password, name, email, url } = user;
+//   return db
+//     .execute('INSERT INTO users(username, password,  name, email, url) values(?,?,?,?,?)', [
+//       username,
+//       password,
+//       name,
+//       email,
+//       url,
+//     ])
+//     .then((result) => result[0].insertId);
+// }
