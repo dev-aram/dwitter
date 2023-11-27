@@ -19,7 +19,7 @@ let db;
 
 export function getTweets() {
   return db.collection('tweets');
-}
+} 
 
 // mySql
 // const pool = mysql.createPool({
